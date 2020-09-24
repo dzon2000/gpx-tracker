@@ -6,6 +6,7 @@
     <script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
     <script src="data.js"></script>
     <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
+    <link rel="stylesheet" href="style.css" />
     <style>
       html, body {
         height: 100%;
@@ -20,7 +21,11 @@
     </style>
   </head>
   <body>
+    <div id="stats">
+        <span id="len"></span>
+    </div>
     <div id="map"></div>
+    <div id="graph"></div>
     <script>
       // initialize Leaflet
       var map = L.map('map').setView({lon: 0, lat: 0}, 2);
@@ -43,6 +48,7 @@
 				prev = latLng;
 			});
 	    console.log(tot);
+	    document.getElementById("len").innerText = (tot / 1000).toFixed(2) + "km";
       // zoom the map to the polyline
       map.fitBounds(polyline.getBounds());
     </script>

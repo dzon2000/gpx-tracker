@@ -1,0 +1,16 @@
+#graph {
+	height: 20%;
+}
+
+#map {
+	height: 80%!important;
+}
+
+#stats {
+	position: absolute;
+	height: 200px;
+        width: 200px;
+        z-index: 99;
+        right: 0;
+        background-color: white;
+}
