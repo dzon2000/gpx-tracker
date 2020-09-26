@@ -13,4 +13,7 @@
         z-index: 99;
         right: 0;
         background-color: white;
+	opacity: 70%;
+	font-size: 30pt;
+	padding: 10px;
 }
