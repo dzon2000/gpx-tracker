@@ -23,6 +23,7 @@
   <body>
     <div id="stats">
         <span id="len"></span>
+        <span id="dur"></span>
     </div>
     <div id="map"></div>
     <div id="graph"></div>
@@ -49,8 +50,19 @@
 			});
 	    console.log(tot);
 	    document.getElementById("len").innerText = (tot / 1000).toFixed(2) + " km";
+	    document.getElementById("dur").innerText = formatDuration(dur);
       // zoom the map to the polyline
       map.fitBounds(polyline.getBounds());
+      function formatDuration(dur) {
+	let res = "";
+	let hour = Math.floor((dur / 3600));
+	let minute = Math.floor((dur - hour * 3600) / 60);
+	if (hour > 0)
+		res += hour + " h "
+	if (minute > 0)
+		res += minute + " m"
+	return res;
+      }
     </script>
   </body>
 </html>
