@@ -22,8 +22,9 @@
   </head>
   <body>
     <div id="stats">
-        <span id="len"></span>
-        <span id="dur"></span>
+	    <span id="len"></span><br>
+	    <span id="dur"></span><br>
+        <span id="spd"></span>
     </div>
     <div id="map"></div>
     <div id="graph"></div>
@@ -51,6 +52,7 @@
 	    console.log(tot);
 	    document.getElementById("len").innerText = (tot / 1000).toFixed(2) + " km";
 	    document.getElementById("dur").innerText = formatDuration(dur);
+	    document.getElementById("spd").innerText = ((tot / 1000) / (dur / 3600)).toFixed(2) + " km/h";
       // zoom the map to the polyline
       map.fitBounds(polyline.getBounds());
       function formatDuration(dur) {
