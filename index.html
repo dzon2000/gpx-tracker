@@ -4,6 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@4.9.0/dist/echarts.min.js"></script>
     <script src="data.js"></script>
     <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
     <link rel="stylesheet" href="style.css" />
@@ -38,21 +39,59 @@
         attribution: '&copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap contributors</a>'
       }).addTo(map);
 
+      var distData = [];
       // show the scale bar on the lower left corner
       L.control.scale().addTo(map);
       var polyline = L.polyline(latlngs, {color: 'red'}).addTo(map);
 	    var tot = 0.0;
 	    var prev;
+	    let i = 0;
+	    let subTotal = 0.0;
 	    polyline.getLatLngs().forEach(function (latLng) {
 				if (prev) {
-		tot += prev.distanceTo(latLng);
+		let dist = prev.distanceTo(latLng);
+		tot += dist;
+		subTotal += dist;
+		if (i != 0 & i++ % 20 == 0) {
+			distData.push(subTotal);
+			subTotal = 0.0;
+		}
 					    }
 				prev = latLng;
 			});
-	    console.log(tot);
 	    document.getElementById("len").innerText = (tot / 1000).toFixed(2) + " km";
 	    document.getElementById("dur").innerText = formatDuration(dur);
 	    document.getElementById("spd").innerText = ((tot / 1000) / (dur / 3600)).toFixed(2) + " km/h";
+	    
+  	var myChart = echarts.init(document.getElementById('graph'));
+
+        // specify chart configuration item and data
+	var timeData = [];
+	    for (var z = 0; z < time.length; z+=20) {
+			timeData.push(time[z]);
+			}
+        var option = {
+			    title: {},
+            tooltip: {
+				trigger: "axis",
+				axisPointer: {
+					                    type: 'cross'
+					                }},
+            legend: {},
+            xAxis: {
+                data: timeData
+            },
+            yAxis: [{
+			type: "value"}],
+            series: [{
+                name: 'Speed',
+                type: 'line',
+                data: getSpeedData(distData, time)
+            }]
+        };
+
+        // use configuration item and data specified to show chart
+        myChart.setOption(option);
       // zoom the map to the polyline
       map.fitBounds(polyline.getBounds());
       function formatDuration(dur) {
@@ -64,6 +103,18 @@
 	if (minute > 0)
 		res += minute + " m"
 	return res;
+      }
+      function getSpeedData(distData, timeData) {
+	let dd = new Date(timeData[0]);
+	let speedData = [];
+	let j = 0;
+	for (let i = 20; i < timeData.length; i+=20) {
+		let tmp = new Date(timeData[i]) - dd;
+		speedData.push((distData[j] / 1000) / (tmp / 1000 / 60 / 60));
+		dd = new Date(timeData[i]);
+		j++;
+	}
+	return speedData;
       }
     </script>
   </body>

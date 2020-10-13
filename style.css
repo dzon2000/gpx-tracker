@@ -1,9 +1,10 @@
 #graph {
-	height: 20%;
+	height: 50%;
+	width: 100%;
 }
 
 #map {
-	height: 80%!important;
+	height: 50%!important;
 }
 
 #stats {
