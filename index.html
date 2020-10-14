@@ -23,101 +23,101 @@
   </head>
   <body>
     <div id="stats">
-	    <span id="len"></span><br>
-	    <span id="dur"></span><br>
-        <span id="spd"></span>
+      <span id="len"></span><br>
+      <span id="dur"></span><br>
+      <span id="spd"></span>
     </div>
     <div id="map"></div>
     <div id="graph"></div>
     <script>
-	// initialize Leaflet
-	var map = L.map('map').setView({lon: 0, lat: 0}, 2);
+      // initialize Leaflet
+      var map = L.map('map').setView({lon: 0, lat: 0}, 2);
 
-	// add the OpenStreetMap tiles
-	L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        	maxZoom: 19,
-        	attribution: '&copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap contributors</a>'
-	}).addTo(map);
+      // add the OpenStreetMap tiles
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap contributors</a>'
+      }).addTo(map);
 
-	var distData = [];
-	// show the scale bar on the lower left corner
-	L.control.scale().addTo(map);
-	var polyline = L.polyline(latlngs, {color: 'red'}).addTo(map);
-	var tot = 0.0;
-	var prev;
-	let i = 0;
-	let subTotal = 0.0;
-	polyline.getLatLngs().forEach(function (latLng) {
-		if (prev) {
-			let dist = prev.distanceTo(latLng);
-			tot += dist;
-			subTotal += dist;
-			if (i != 0 & i++ % 20 == 0) {
-				distData.push(subTotal);
-				subTotal = 0.0;
-			}
-		}
-		prev = latLng;
-	});
-	document.getElementById("len").innerText = (tot / 1000).toFixed(2) + " km";
-	document.getElementById("dur").innerText = formatDuration(dur);
-	document.getElementById("spd").innerText = ((tot / 1000) / (dur / 3600)).toFixed(2) + " km/h";
-	    
-	var myChart = echarts.init(document.getElementById('graph'));
+      var distData = [];
+      // show the scale bar on the lower left corner
+      L.control.scale().addTo(map);
+      var polyline = L.polyline(latlngs, {color: 'red'}).addTo(map);
+      var tot = 0.0;
+      var prev;
+      let i = 0;
+      let subTotal = 0.0;
+      polyline.getLatLngs().forEach(function (latLng) {
+        if (prev) {
+          let dist = prev.distanceTo(latLng);
+          tot += dist;
+          subTotal += dist;
+          if (i != 0 & i++ % 20 == 0) {
+            distData.push(subTotal);
+            subTotal = 0.0;
+          }
+        }
+        prev = latLng;
+      });
+      document.getElementById("len").innerText = (tot / 1000).toFixed(2) + " km";
+      document.getElementById("dur").innerText = formatDuration(dur);
+      document.getElementById("spd").innerText = ((tot / 1000) / (dur / 3600)).toFixed(2) + " km/h";
+        
+      var myChart = echarts.init(document.getElementById('graph'));
 
-        // specify chart configuration item and data
-	var timeData = [];
-		for (var z = 0; z < time.length; z+=20) {
-			timeData.push(time[z]);
-		}
-        var option = {
-		title: {},
-		tooltip: {
-			trigger: "axis",
-			axisPointer: {
-				type: 'cross'
-			}
-		}
-		legend: {},
-		xAxis: {
-			data: timeData
-		},
-		yAxis: [{
-				type: "value"
-		}],
-		series: [{
-			type: 'bar',
-			data: getSpeedData(distData, time)
-		}]
-	};
+      // specify chart configuration item and data
+      var timeData = [];
+      for (var z = 0; z < time.length; z+=20) {
+        timeData.push(time[z]);
+      }
+      var option = {
+        title: {},
+        tooltip: {
+          trigger: "axis",
+          axisPointer: {
+            type: 'cross'
+          }
+        }
+        legend: {},
+        xAxis: {
+          data: timeData
+        },
+        yAxis: [{
+          type: "value"
+        }],
+        series: [{
+          type: 'bar',
+          data: getSpeedData(distData, time)
+        }]
+      };
 
-        // use configuration item and data specified to show chart
-        myChart.setOption(option);
-	// zoom the map to the polyline
-	map.fitBounds(polyline.getBounds());
-	function formatDuration(dur) {
-		let res = "";
-		let hour = Math.floor((dur / 3600));
-		let minute = Math.floor((dur - hour * 3600) / 60);
-		if (hour > 0)
-			res += hour + " h "
-		if (minute > 0)
-			res += minute + " m"
-		return res;
-	}
-	
-	function getSpeedData(distData, timeData) {
-		let dd = new Date(timeData[0]);
-		let speedData = [];
-		let j = 0;
-		for (let i = 20; i < timeData.length; i+=20) {
-			let tmp = new Date(timeData[i]) - dd;
-			speedData.push(((distData[j] / 1000) / (tmp / 1000 / 60 / 60)).toFixed(2));
-			dd = new Date(timeData[i]);
-			j++;
-		}
-		return speedData;
-	}
+      // use configuration item and data specified to show chart
+      myChart.setOption(option);
+      // zoom the map to the polyline
+      map.fitBounds(polyline.getBounds());
+      function formatDuration(dur) {
+        let res = "";
+        let hour = Math.floor((dur / 3600));
+        let minute = Math.floor((dur - hour * 3600) / 60);
+        if (hour > 0)
+          res += hour + " h "
+        if (minute > 0)
+          res += minute + " m"
+        return res;
+      }
+    
+      function getSpeedData(distData, timeData) {
+        let dd = new Date(timeData[0]);
+        let speedData = [];
+        let j = 0;
+        for (let i = 20; i < timeData.length; i+=20) {
+          let tmp = new Date(timeData[i]) - dd;
+          speedData.push(((distData[j] / 1000) / (tmp / 1000 / 60 / 60)).toFixed(2));
+          dd = new Date(timeData[i]);
+          j++;
+        }
+        return speedData;
+      }
     </script>
   </body>
 </html>
